@@ -1,114 +1,90 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>VAPECOIN • Valor de Canje</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VAPECOIN • Valor de Canje</title>
 
-  <style>
-    body{
-      margin:0;
-      background:transparent;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    }
-    .wrap{
-      display:flex;
-      justify-content:center;
-      padding:12px;
-    }
-    .card{
-      width:100%;
-      max-width:900px;
-      background:#fff;
-      border-radius:18px;
-      border:1px solid #e9eef5;
-      box-shadow:0 10px 24px rgba(0,0,0,.10);
-      overflow:hidden;
-    }
-    .top{
-      background:linear-gradient(135deg,#0b76ff 0%, #08338f 100%);
-      color:#fff;
-      padding:18px;
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    .logo{
-      width:54px;
-      height:54px;
-      border-radius:50%;
-      background:rgba(0,0,0,.25);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      font-size:28px;
-    }
-    .title{
-      font-weight:900;
-      font-size:22px;
-      line-height:1.1;
-    }
-    .subtitle{
-      font-size:14px;
-      opacity:.9;
-      margin-top:4px;
-    }
-    .price{
-      margin-left:auto;
-      text-align:right;
-    }
-    .price-main{
-      font-weight:900;
-      font-size:22px;
-    }
-    .price-base{
-      font-size:14px;
-      opacity:.9;
-      margin-top:6px;
-    }
-    .mid{
-      padding:16px 18px;
-    }
-    .tabs{
-      display:flex;
-      justify-content:flex-end;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .tab{
-      padding:6px 14px;
-      border-radius:999px;
-      background:#eef2f7;
-      color:#607089;
-      font-weight:800;
-      font-size:12px;
-      cursor:pointer;
-    }
-    .tab.active{
-      background:#0b76ff;
-      color:#fff;
-    }
-    .chart{
-      background:#f6f8fc;
-      border:1px solid #e9eef5;
-      border-radius:16px;
-      padding:10px;
-    }
-    svg{
-      width:100%;
-      height:200px;
-      display:block;
-    }
-    .footer{
-      padding:12px 18px 16px;
-      font-size:12px;
-      color:#6b778c;
-    }
-    .footer strong{
-      color:#2b3445;
-    }
-  </style>
+<style>
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background:transparent;
+}
+.wrap{
+  display:flex;
+  justify-content:center;
+  padding:14px;
+}
+.card{
+  width:100%;
+  max-width:900px;
+  background:#fff;
+  border-radius:18px;
+  border:1px solid #e9eef5;
+  box-shadow:0 10px 24px rgba(0,0,0,.10);
+  overflow:hidden;
+}
+.top{
+  background:linear-gradient(135deg,#0b76ff 0%, #08338f 100%);
+  color:#fff;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.logo{
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  background:rgba(0,0,0,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:28px;
+}
+.title{
+  font-weight:900;
+  font-size:22px;
+}
+.subtitle{
+  font-size:14px;
+  opacity:.9;
+}
+.price{
+  margin-left:auto;
+  text-align:right;
+}
+.price-main{
+  font-weight:900;
+  font-size:22px;
+}
+.price-base{
+  font-size:14px;
+  opacity:.9;
+}
+.mid{
+  padding:16px 18px;
+}
+.chart{
+  background:#f6f8fc;
+  border:1px solid #e9eef5;
+  border-radius:16px;
+  padding:10px;
+}
+svg{
+  width:100%;
+  height:200px;
+  display:block;
+}
+.footer{
+  padding:12px 18px 16px;
+  font-size:12px;
+  color:#6b778c;
+}
+.footer strong{color:#2b3445;}
+</style>
 </head>
 
 <body>
@@ -127,17 +103,10 @@
     </div>
 
     <div class="mid">
-      <div class="tabs">
-        <div class="tab active" data-range="24h">24H</div>
-        <div class="tab" data-range="7d">7D</div>
-        <div class="tab" data-range="1m">1M</div>
-        <div class="tab" data-range="max">MAX</div>
-      </div>
-
       <div class="chart">
         <svg viewBox="0 0 900 200" preserveAspectRatio="none">
           <path id="area" fill="rgba(11,118,255,.18)"></path>
-          <path id="line" fill="none" stroke="#0b76ff" stroke-width="3.5"></path>
+          <path id="line" fill="#0b76ff" stroke="#0b76ff" stroke-width="3.5"></path>
         </svg>
       </div>
     </div>
@@ -150,91 +119,61 @@
 </div>
 
 <script>
-const RATE_URL = "./vapecoin-rate.json";
-const STORAGE_KEY = "vapecoin_series";
-const UPDATE_EVERY = 60000;
-
-let range = "24h";
+const RATE_URL = "https://peruvapea-svg.github.io/vapecoin-widget/vapecoin-rate.json";
 
 const elLabel = document.getElementById("label");
-const elMain = document.getElementById("mainPrice");
-const elBase = document.getElementById("basePrice");
-const elUpd = document.getElementById("updatedAt");
+const elMain  = document.getElementById("mainPrice");
+const elBase  = document.getElementById("basePrice");
+const elUpd   = document.getElementById("updatedAt");
 const pathLine = document.getElementById("line");
 const pathArea = document.getElementById("area");
 
-const fmtUSD = v => new Intl.NumberFormat("en-US",{
-  style:"currency",
-  currency:"USD",
-  maximumFractionDigits:6
-}).format(v);
-
-const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
-
-function randomWalk(prev, base, range){
-  const min = base*(1-range);
-  const max = base*(1+range);
-  const step = (Math.random()*2-1)*0.012;
-  return clamp(prev*(1+step),min,max);
+function fmtUSD(v){
+  return new Intl.NumberFormat("en-US",{
+    style:"currency",
+    currency:"USD",
+    maximumFractionDigits:6
+  }).format(v);
 }
 
-function loadSeries(){
-  try{
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  }catch{ return []; }
-}
-function saveSeries(s){ localStorage.setItem(STORAGE_KEY,JSON.stringify(s)); }
-
-function draw(points){
+function drawChart(base){
   const w=900,h=200,p=12;
-  const vs=points.map(p=>p.v);
-  const min=Math.min(...vs), max=Math.max(...vs);
-  const span=(max-min)||1;
-
   let d="",a="";
-  points.forEach((pt,i)=>{
-    const x=p+(w-2*p)*(i/(points.length-1));
-    const y=(h-p)-(h-2*p)*((pt.v-min)/span);
-    d+= i===0?`M${x},${y}`:` L${x},${y}`;
-    if(i===0) a=`M${x},${h-p} L${x},${y}`;
+  let prev=base;
+
+  for(let i=0;i<40;i++){
+    const step=(Math.random()*2-1)*0.01;
+    prev=Math.max(base*0.5,Math.min(base*1.5,prev*(1+step)));
+
+    const x=p+(w-2*p)*(i/39);
+    const y=(h-p)-(h-2*p)*((prev-base*0.5)/(base));
+
+    d+=i===0?`M${x},${y}`:` L${x},${y}`;
+    if(i===0)a=`M${x},${h-p} L${x},${y}`;
     else a+=` L${x},${y}`;
-  });
+  }
   a+=` L${w-p},${h-p} Z`;
 
   pathLine.setAttribute("d",d);
   pathArea.setAttribute("d",a);
 }
 
-async function tick(){
-  const cfg = await (await fetch(RATE_URL,{cache:"no-store"})).json();
+async function init(){
+  const res = await fetch(RATE_URL,{cache:"no-store"});
+  const cfg = await res.json();
 
-  let series = loadSeries();
   const base = Number(cfg.base_usd || 0.01);
-  const rangePct = Number(cfg.range_pct ?? 0.5);
-
-  if(series.length===0){
-    series.push({t:Date.now()-3600000, v: base});
-  }
-
-  // agrega puntos (1 por minuto)
-  while(series[series.length-1].t + 60000 <= Date.now()){
-    series.push({
-      t: series[series.length-1].t + 60000,
-      v: randomWalk(series[series.length-1].v, base, rangePct)
-    });
-    if(series.length > 5000) series.shift();
-  }
-
-  saveSeries(series);
-
-  const current = series[series.length-1].v;
+  const shown = base*(1+(Math.random()*2-1)*(cfg.range_pct ?? 0.5));
 
   elLabel.textContent = cfg.label || "Valor de canje interno";
-  elMain.textContent  = `1 VAPECOIN = ${fmtUSD(current)}`;
+  elMain.textContent  = `1 VAPECOIN = ${fmtUSD(shown)}`;
   elBase.textContent  = `Base: ${fmtUSD(base)}`;
   elUpd.textContent   = cfg.updated_at || "—";
 
-  // dibuja últimos 120 puntos
-  draw(series.slice(-120));
+  drawChart(base);
 }
 
+init();
+</script>
+</body>
+</html>
