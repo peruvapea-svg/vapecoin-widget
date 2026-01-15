@@ -207,5 +207,34 @@ function draw(points){
 
 async function tick(){
   const cfg = await (await fetch(RATE_URL,{cache:"no-store"})).json();
+
   let series = loadSeries();
-  const base = Number(cfg.base_usd_
+  const base = Number(cfg.base_usd || 0.01);
+  const rangePct = Number(cfg.range_pct ?? 0.5);
+
+  if(series.length===0){
+    series.push({t:Date.now()-3600000, v: base});
+  }
+
+  // agrega puntos (1 por minuto)
+  while(series[series.length-1].t + 60000 <= Date.now()){
+    series.push({
+      t: series[series.length-1].t + 60000,
+      v: randomWalk(series[series.length-1].v, base, rangePct)
+    });
+    if(series.length > 5000) series.shift();
+  }
+
+  saveSeries(series);
+
+  const current = series[series.length-1].v;
+
+  elLabel.textContent = cfg.label || "Valor de canje interno";
+  elMain.textContent  = `1 VAPECOIN = ${fmtUSD(current)}`;
+  elBase.textContent  = `Base: ${fmtUSD(base)}`;
+  elUpd.textContent   = cfg.updated_at || "—";
+
+  // dibuja últimos 120 puntos
+  draw(series.slice(-120));
+}
+
