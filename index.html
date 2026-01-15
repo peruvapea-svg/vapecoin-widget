@@ -6,107 +6,146 @@
 <title>VAPECOIN • Valor de Canje</title>
 
 <style>
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background:transparent;
-}
-.wrap{
-  display:flex;
-  justify-content:center;
-  padding:14px;
-}
-.card{
-  width:100%;
-  max-width:900px;
-  background:#fff;
-  border-radius:18px;
-  border:1px solid #e9eef5;
-  box-shadow:0 10px 24px rgba(0,0,0,.10);
-  overflow:hidden;
-}
-.top{
-  background:linear-gradient(135deg,#0b76ff 0%, #08338f 100%);
-  color:#fff;
-  padding:18px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-.logo{
-  width:54px;
-  height:54px;
-  border-radius:50%;
-  background:rgba(0,0,0,.25);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  font-size:28px;
-}
-.title{
-  font-weight:900;
-  font-size:22px;
-}
-.subtitle{
-  font-size:14px;
-  opacity:.9;
-}
-.price{
-  margin-left:auto;
-  text-align:right;
-}
-.price-main{
-  font-weight:900;
-  font-size:22px;
-}
-.price-base{
-  font-size:14px;
-  opacity:.9;
-}
-.mid{
-  padding:16px 18px;
-}
-.chart{
-  background:#f6f8fc;
-  border:1px solid #e9eef5;
-  border-radius:16px;
-  padding:10px;
-}
-svg{
-  width:100%;
-  height:200px;
-  display:block;
-}
-.footer{
-  padding:12px 18px 16px;
-  font-size:12px;
-  color:#6b778c;
-}
-.footer strong{color:#2b3445;}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background:transparent;
+  }
+  .wrap{
+    display:flex;
+    justify-content:center;
+    padding:14px;
+  }
+  .card{
+    width:100%;
+    max-width:900px;
+    background:#fff;
+    border-radius:18px;
+    border:1px solid #e9eef5;
+    box-shadow:0 10px 24px rgba(0,0,0,.10);
+    overflow:hidden;
+  }
+  .top{
+    background:linear-gradient(135deg,#0b76ff 0%, #08338f 100%);
+    color:#fff;
+    padding:18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .logo{
+    width:54px;
+    height:54px;
+    border-radius:50%;
+    background:rgba(0,0,0,.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:28px;
+  }
+  .title{
+    font-weight:900;
+    font-size:22px;
+    line-height:1.1;
+  }
+  .subtitle{
+    font-size:14px;
+    opacity:.9;
+    margin-top:4px;
+  }
+  .price{
+    margin-left:auto;
+    text-align:right;
+  }
+  .price-main{
+    font-weight:900;
+    font-size:22px;
+  }
+  .price-base{
+    font-size:14px;
+    opacity:.9;
+    margin-top:6px;
+  }
+
+  .mid{
+    padding:16px 18px;
+  }
+  .tabs{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .tab{
+    padding:6px 14px;
+    border-radius:999px;
+    background:#eef2f7;
+    color:#607089;
+    font-weight:800;
+    font-size:12px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .tab.active{
+    background:#0b76ff;
+    color:#fff;
+  }
+
+  .chart{
+    background:#f6f8fc;
+    border:1px solid #e9eef5;
+    border-radius:16px;
+    padding:10px;
+  }
+  svg{
+    width:100%;
+    height:200px;
+    display:block;
+  }
+  .footer{
+    padding:12px 18px 16px;
+    font-size:12px;
+    color:#6b778c;
+  }
+  .footer strong{color:#2b3445;}
 </style>
 </head>
 
 <body>
 <div class="wrap">
   <div class="card">
+
     <div class="top">
       <div class="logo">V</div>
+
       <div>
         <div class="title">VAPECOIN</div>
         <div class="subtitle" id="label">Valor de canje interno</div>
       </div>
+
       <div class="price">
         <div class="price-main" id="mainPrice">—</div>
         <div class="price-base" id="basePrice">Base: —</div>
+        <div class="price-base" id="dayChange">—</div>
+        <div class="price-base" id="lastUpdate">Última variación: —</div>
       </div>
     </div>
 
     <div class="mid">
+      <!-- BOTONES DE RANGO -->
+      <div class="tabs">
+        <div class="tab active" data-range="24H">24H</div>
+        <div class="tab" data-range="7D">7D</div>
+        <div class="tab" data-range="1M">1M</div>
+        <div class="tab" data-range="1Y">1Y</div>
+        <div class="tab" data-range="MAX">MAX</div>
+      </div>
+
       <div class="chart">
         <svg viewBox="0 0 900 200" preserveAspectRatio="none">
           <path id="area" fill="rgba(11,118,255,.18)"></path>
-          <path id="line" fill="#0b76ff" stroke="#0b76ff" stroke-width="3.5"></path>
+          <path id="line" fill="none" stroke="#0b76ff" stroke-width="3.5"></path>
         </svg>
       </div>
     </div>
@@ -115,22 +154,39 @@ svg{
       <div><strong>*</strong> No es precio de mercado. Valor de canje interno válido solo en PERUVAPEA.</div>
       <div style="margin-top:6px">Actualizado: <span id="updatedAt">—</span></div>
     </div>
+
   </div>
 </div>
 
 <script>
 const RATE_URL = "https://peruvapea-svg.github.io/vapecoin-widget/vapecoin-rate.json";
 
+// UI
 const elLabel = document.getElementById("label");
 const elMain  = document.getElementById("mainPrice");
 const elBase  = document.getElementById("basePrice");
 const elUpd   = document.getElementById("updatedAt");
+const elDay   = document.getElementById("dayChange");
+const elLast  = document.getElementById("lastUpdate");
 
 const pathLine = document.getElementById("line");
 const pathArea = document.getElementById("area");
 
 let currentRange = "24H";
+let baseCache = 0.01;
+let rangePctCache = 0.5;
 
+// Settings
+const PRICE_REFRESH_MS = 30000; // 30s
+const COUNTER_REFRESH_MS = 1000; // 1s
+
+// Storage keys
+const STORAGE = {
+  sod: "vapecoin_start_of_day_v1", // { day:"YYYY-MM-DD", price:number }
+  last: "vapecoin_last_v1",        // { price:number, ts:number }
+};
+
+// Helpers
 function fmtUSD(v){
   return new Intl.NumberFormat("en-US",{
     style:"currency",
@@ -139,88 +195,188 @@ function fmtUSD(v){
   }).format(v);
 }
 
+function todayKey(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
+}
+
+function safeGet(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  }catch{ return fallback; }
+}
+function safeSet(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch{}
+}
+
+function pct(from, to){
+  if(!from || from === 0) return 0;
+  return ((to - from) / from) * 100;
+}
+
+function humanAgo(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  if(s < 60) return `${s}s`;
+  const m = Math.floor(s/60);
+  return `${m}min`;
+}
+
+function clamp(v, lo, hi){
+  return Math.max(lo, Math.min(hi, v));
+}
+
+// Generate a series that “looks like” history
 function generateSeries(base, points, volatility){
-  const data = [];
-  let value = base;
+  const lo = base*(1 - rangePctCache);
+  const hi = base*(1 + rangePctCache);
+
+  const values = [];
+  let v = base;
 
   for(let i=0;i<points;i++){
-    const step = (Math.random()*2-1)*volatility;
-    value = Math.max(base*0.5, Math.min(base*1.5, value*(1+step)));
-    data.push(value);
+    const step = (Math.random()*2-1) * volatility;
+    v = clamp(v*(1+step), lo, hi);
+    values.push(v);
   }
-  return data;
+  return values;
 }
 
-function drawChart(values){
-  const w=900,h=200,p=12;
-  const min=Math.min(...values);
-  const max=Math.max(...values);
-  const span=(max-min)||1;
-
-  let d="",a="";
-
-  values.forEach((v,i)=>{
-    const x=p+(w-2*p)*(i/(values.length-1));
-    const y=(h-p)-(h-2*p)*((v-min)/span);
-    d+=i===0?`M${x},${y}`:` L${x},${y}`;
-    if(i===0)a=`M${x},${h-p} L${x},${y}`;
-    else a+=` L${x},${y}`;
-  });
-
-  a+=` L${w-p},${h-p} Z`;
-  pathLine.setAttribute("d",d);
-  pathArea.setAttribute("d",a);
-}
-
-function updateRange(base){
-  let series;
-
+function seriesForRange(base){
+  // Bigger ranges → more points and more visual movement
   switch(currentRange){
-    case "24H":
-      series = generateSeries(base, 40, 0.003);
-      break;
-    case "7D":
-      series = generateSeries(base, 60, 0.006);
-      break;
-    case "1M":
-      series = generateSeries(base, 80, 0.009);
-      break;
-    case "1Y":
-      series = generateSeries(base, 120, 0.015);
-      break;
-    case "MAX":
-      series = generateSeries(base, 160, 0.02);
-      break;
+    case "24H": return generateSeries(base, 48, 0.004);
+    case "7D":  return generateSeries(base, 70, 0.007);
+    case "1M":  return generateSeries(base, 90, 0.010);
+    case "1Y":  return generateSeries(base, 120, 0.014);
+    case "MAX": return generateSeries(base, 160, 0.018);
+    default:    return generateSeries(base, 48, 0.004);
   }
-  drawChart(series);
+}
+
+// Draw SVG area + line
+function drawChart(values){
+  const w=900, h=200, p=12;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = (max - min) || 1;
+
+  let d="", a="";
+  values.forEach((v,i)=>{
+    const x = p + (w-2*p) * (i/(values.length-1));
+    const y = (h-p) - (h-2*p) * ((v-min)/span);
+
+    d += (i===0) ? `M${x},${y}` : ` L${x},${y}`;
+    if(i===0) a = `M${x},${h-p} L${x},${y}`;
+    else a += ` L${x},${y}`;
+  });
+  a += ` L${w-p},${h-p} Z`;
+
+  pathLine.setAttribute("d", d);
+  pathArea.setAttribute("d", a);
+}
+
+// Create next price within ±rangePct
+function nextPrice(base){
+  const rnd = (Math.random()*2 - 1) * rangePctCache;
+  return base * (1 + rnd);
+}
+
+function ensureStartOfDay(price){
+  const key = todayKey();
+  const sod = safeGet(STORAGE.sod, null);
+  if(!sod || sod.day !== key){
+    safeSet(STORAGE.sod, { day:key, price });
+  }
+}
+
+function setLast(price){
+  safeSet(STORAGE.last, { price, ts: Date.now() });
+}
+
+function updatePriceUI(price){
+  // Main price
+  elMain.textContent = `1 VAPECOIN = ${fmtUSD(price)}`;
+
+  // % today
+  const sod = safeGet(STORAGE.sod, null);
+  if(sod && typeof sod.price === "number"){
+    const ch = pct(sod.price, price);
+    const arrow = ch >= 0 ? "⬆️" : "⬇️";
+    const sign = ch >= 0 ? "+" : "";
+    elDay.textContent = `${arrow} ${sign}${ch.toFixed(2)}% hoy`;
+  }else{
+    elDay.textContent = "—";
+  }
+
+  // "last variation" text (the live counter is updated elsewhere too)
+  const last = safeGet(STORAGE.last, null);
+  if(last && last.ts){
+    elLast.textContent = `Última variación: hace ${humanAgo(Date.now()-last.ts)} (auto)`;
+  }else{
+    elLast.textContent = "Última variación: —";
+  }
+}
+
+function updateChart(){
+  const values = seriesForRange(baseCache);
+  drawChart(values);
 }
 
 async function init(){
-  const res = await fetch(RATE_URL,{cache:"no-store"});
-  const cfg = await res.json();
+  const cfg = await (await fetch(RATE_URL, {cache:"no-store"})).json();
 
-  const base = Number(cfg.base_usd || 0.01);
-  const shown = base*(1+(Math.random()*2-1)*(cfg.range_pct ?? 0.5));
+  baseCache = Number(cfg.base_usd || 0.01);
+  rangePctCache = Number(cfg.range_pct ?? 0.5);
 
+  // Fixed texts
   elLabel.textContent = cfg.label || "Valor de canje interno";
-  elMain.textContent  = `1 VAPECOIN = ${fmtUSD(shown)}`;
-  elBase.textContent  = `Base: ${fmtUSD(base)}`;
+  elBase.textContent  = `Base: ${fmtUSD(baseCache)}`;
   elUpd.textContent   = cfg.updated_at || "—";
 
-  updateRange(base);
+  // Initial price + start-of-day baseline
+  const initial = nextPrice(baseCache);
+  ensureStartOfDay(initial);
+  setLast(initial);
+  updatePriceUI(initial);
 
+  // Initial chart
+  updateChart();
+
+  // Tabs
   document.querySelectorAll(".tab").forEach(tab=>{
-    tab.onclick=()=>{
+    tab.onclick = ()=>{
       document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
       tab.classList.add("active");
       currentRange = tab.dataset.range;
-      updateRange(base);
+      updateChart();
     };
   });
+
+  // Auto price refresh
+  setInterval(()=>{
+    const price = nextPrice(baseCache);
+    ensureStartOfDay(price);
+    setLast(price);
+    updatePriceUI(price);
+
+    // Optional: refresh chart a bit when price updates (looks alive)
+    updateChart();
+  }, PRICE_REFRESH_MS);
+
+  // Live counter refresh every second
+  setInterval(()=>{
+    const last = safeGet(STORAGE.last, null);
+    if(last && last.ts){
+      elLast.textContent = `Última variación: hace ${humanAgo(Date.now()-last.ts)} (auto)`;
+    }
+  }, COUNTER_REFRESH_MS);
 }
 
 init();
 </script>
-
 </body>
 </html>
