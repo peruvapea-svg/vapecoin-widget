@@ -1,0 +1,33 @@
+name: Update VAPECOIN history daily
+
+on:
+  schedule:
+    # 14:00 UTC = 09:00 Lima (UTC-5)
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Update history
+        run: node update_history.js
+
+      - name: Commit changes
+        run: |
+          git config user.name "vapecoin-bot"
+          git config user.email "vapecoin-bot@users.noreply.github.com"
+          git add history.json vapecoin-rate.json
+          git commit -m "Daily VAPECOIN update" || echo "No changes to commit"
+          git push
