@@ -166,8 +166,8 @@ function addLine(parent, x1,y1,x2,y2, color="rgba(120,140,165,.35)", width=1){
 
 function drawChart(points){
   // SVG coords
-  const W = 960, H = 260;
-  const padL = 64, padR = 18, padT = 14, padB = 38;
+  const W = 960, H = 210;
+  const padL = 64, padR = 22, padT = 14, padB = 52;
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
 
@@ -198,7 +198,14 @@ function drawChart(points){
     const idx = Math.round(i*(points.length-1)/(labelCount-1 || 1));
     const x = xAt(idx);
     const d = points[idx].date;
-    addText(svgLabels, x, H-14, d, 12, "#6f7f96", "middle");
+   const d = points[idx].date;   // YYYY-MM-DD
+const short = d.slice(5);    // MM-DD
+
+// Evita que el texto se salga del SVG
+const safeX = Math.max(padL + 18, Math.min(W - padR - 18, x));
+
+addText(svgLabels, safeX, H-16, short, 12, "#6f7f96", "middle");
+
     // vertical guide (light)
     addLine(svgGrid, x, padT, x, padT+plotH, "rgba(120,140,165,.20)", 1);
   }
