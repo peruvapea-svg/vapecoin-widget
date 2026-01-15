@@ -228,6 +228,21 @@ function updateHeaderUI(allPoints){
   // last value = official "today"
   const last = allPoints[allPoints.length-1];
   const prev = allPoints.length >= 2 ? allPoints[allPoints.length-2] : null;
+// Texto de tendencia basado en comportamiento REAL (hoy vs ayer)
+if (prev) {
+  const diffPct = ((last.value - prev.value) / prev.value) * 100;
+
+  // Zona neutra ±0.05%
+  if (diffPct > 0.05) {
+    elNote.textContent = "Tendencia semanal: 📈 Alcista";
+  } else if (diffPct < -0.05) {
+    elNote.textContent = "Tendencia semanal: 📉 Bajista";
+  } else {
+    elNote.textContent = "Tendencia semanal: ➖ Estable";
+  }
+} else {
+  elNote.textContent = "Tendencia semanal: ➖ Estable";
+}
 
   elMain.textContent = `1 VAPECOIN = ${fmtUSD(last.value)}`;
   elBase.textContent = `Valor oficial del día • USD`;
