@@ -10,7 +10,7 @@
   .wrap{display:flex;justify-content:center;padding:14px;}
   .card{
     width:100%;
-    max-width:680px; /* ~30% menos horizontal */
+    max-width:540px; /* 20% más corto aprox */
     background:#fff;
     border-radius:18px;
     border:1px solid #e9eef5;
@@ -26,7 +26,7 @@
     gap:14px;
   }
   .logo{
-    width:52px;height:52px;border-radius:50%;
+    width:50px;height:50px;border-radius:50%;
     background:rgba(0,0,0,.25);
     display:flex;align-items:center;justify-content:center;
     font-weight:900;font-size:26px;
@@ -54,10 +54,16 @@
     border-radius:16px;
     padding:10px;
   }
-  svg{width:100%;height:210px;display:block;}
+  svg{width:100%;height:315px;display:block;} /* 50% más alto */
 
   .footer{padding:12px 16px 14px;font-size:12px;color:#6b778c;}
   .footer strong{color:#2b3445;}
+
+  /* móvil: que no se rompa */
+  @media (max-width:420px){
+    .price-main{font-size:18px;}
+    svg{height:290px;}
+  }
 </style>
 </head>
 
@@ -83,18 +89,18 @@
 
     <div class="mid">
       <div class="tabs">
-        <div class="tab active" data-range="24H">24H</div>
-        <div class="tab" data-range="7D">7D</div>
+        <div class="tab" data-range="24H">24H</div>
+        <div class="tab active" data-range="7D">7D</div>
         <div class="tab" data-range="1M">1M</div>
         <div class="tab" data-range="1Y">1Y</div>
         <div class="tab" data-range="MAX">MAX</div>
       </div>
 
       <div class="chart">
-        <svg id="svg" viewBox="0 0 960 210" preserveAspectRatio="none">
+        <!-- ViewBox alto = 315 (coincide con CSS y JS) -->
+        <svg id="svg" viewBox="0 0 960 315" preserveAspectRatio="none">
           <g id="grid"></g>
           <g id="labels"></g>
-
           <path id="area" fill="rgba(11,118,255,.16)"></path>
           <path id="line" fill="none" stroke="#0b76ff" stroke-width="3.5"></path>
           <circle id="dot" r="5" fill="#0b76ff"></circle>
@@ -114,7 +120,7 @@
 const RATE_URL = "https://peruvapea-svg.github.io/vapecoin-widget/vapecoin-rate.json";
 const HISTORY_URL = "https://peruvapea-svg.github.io/vapecoin-widget/history.json";
 
-let currentRange = "7D"; // en tu captura estabas en 7D, lo dejo como default
+let currentRange = "7D";
 let history = [];
 let cfg = null;
 
@@ -152,8 +158,7 @@ function daysBetween(a,b){
   return Math.round((b - a) / ms);
 }
 function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
-
-function addText(parent, x, y, text, size=12, color="#7a889e", anchor="start"){
+function addText(parent, x, y, text, size=12, color="#6f7f96", anchor="start"){
   const t = document.createElementNS("http://www.w3.org/2000/svg","text");
   t.setAttribute("x", x);
   t.setAttribute("y", y);
@@ -164,7 +169,7 @@ function addText(parent, x, y, text, size=12, color="#7a889e", anchor="start"){
   t.textContent = text;
   parent.appendChild(t);
 }
-function addLine(parent, x1,y1,x2,y2, color="rgba(120,140,165,.35)", width=1){
+function addLine(parent, x1,y1,x2,y2, color="rgba(120,140,165,.28)", width=1){
   const l = document.createElementNS("http://www.w3.org/2000/svg","line");
   l.setAttribute("x1", x1); l.setAttribute("y1", y1);
   l.setAttribute("x2", x2); l.setAttribute("y2", y2);
@@ -175,20 +180,35 @@ function addLine(parent, x1,y1,x2,y2, color="rgba(120,140,165,.35)", width=1){
 
 function sliceForRange(data){
   if(data.length === 0) return data;
-
-  if(currentRange === "24H"){
-    // histórico diario => 24H muestra 2 puntos (hoy vs ayer)
-    return data.slice(-2);
-  }
-  if(currentRange === "7D") return data.slice(-7);
-  if(currentRange === "1M") return data.slice(-30);
-  if(currentRange === "1Y") return data.slice(-365);
+  if(currentRange === "24H") return data.slice(-2);
+  if(currentRange === "7D")  return data.slice(-7);
+  if(currentRange === "1M")  return data.slice(-30);
+  if(currentRange === "1Y")  return data.slice(-365);
   return data;
 }
 
-function drawChart(points){
-  const W = 960, H = 210;
-  const padL = 64, padR = 22, padT = 14, padB = 52; // +espacio abajo para fechas
+function safePoints(points){
+  // Evita blanco si hay 0/1 puntos
+  if(points.length >= 2) return points;
+  if(history.length >= 2) return history.slice(-2);
+  // si solo hay 1 punto total, duplicamos artificialmente (misma fecha/valor)
+  if(history.length === 1) return [history[0], history[0]];
+  return [];
+}
+
+function drawChart(pointsRaw){
+  const points = safePoints(pointsRaw);
+  if(points.length < 2){
+    // no hay data
+    clearNode(svgGrid); clearNode(svgLabels);
+    pathLine.setAttribute("d", "");
+    pathArea.setAttribute("d", "");
+    dot.setAttribute("cx","0"); dot.setAttribute("cy","0");
+    return;
+  }
+
+  const W = 960, H = 315;
+  const padL = 70, padR = 26, padT = 14, padB = 62; // más espacio abajo
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
 
@@ -203,49 +223,47 @@ function drawChart(points){
   clearNode(svgGrid);
   clearNode(svgLabels);
 
-  // grid + etiquetas Y (5)
+  // Grid + labels Y (5)
   const levels = 5;
   for(let k=0;k<levels;k++){
     const t = k/(levels-1);
     const y = padT + plotH*t;
-    addLine(svgGrid, padL, y, W-padR, y, "rgba(120,140,165,.28)", 1);
-
+    addLine(svgGrid, padL, y, W-padR, y);
     const v = (maxV - span*t);
     addText(svgLabels, padL-10, y+4, fmtUSD(v), 12, "#6f7f96", "end");
   }
 
-  // etiquetas X (máx 4) y guías verticales suaves
+  // X labels (4 máx) formato corto MM-DD y sin corte
   const labelCount = Math.min(4, points.length);
   for(let i=0;i<labelCount;i++){
     const idx = Math.round(i*(points.length-1)/(labelCount-1 || 1));
     const x = xAt(idx);
 
-    const d = points[idx].date; // YYYY-MM-DD
-    const short = d.slice(5);   // MM-DD
+    const d = points[idx].date || "";
+    const short = d.length >= 10 ? d.slice(5) : d;
 
-    // evita corte por bordes
-    const safeX = Math.max(padL + 18, Math.min(W - padR - 18, x));
+    const safeX = Math.max(padL + 20, Math.min(W - padR - 20, x));
+    addText(svgLabels, safeX, H-20, short, 12, "#6f7f96", "middle");
 
-    addText(svgLabels, safeX, H-16, short, 12, "#6f7f96", "middle");
     addLine(svgGrid, x, padT, x, padT+plotH, "rgba(120,140,165,.16)", 1);
   }
 
-  // line path
-  let d = "";
+  // Line path
+  let dPath = "";
   for(let i=0;i<points.length;i++){
     const x = xAt(i);
     const y = yAt(points[i].value);
-    d += (i===0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
+    dPath += (i===0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
   }
-  pathLine.setAttribute("d", d);
+  pathLine.setAttribute("d", dPath);
 
-  // area
+  // Area path
   const lastX = xAt(points.length-1);
   const firstX = xAt(0);
-  const areaD = d + ` L ${lastX} ${padT+plotH} L ${firstX} ${padT+plotH} Z`;
+  const areaD = dPath + ` L ${lastX} ${padT+plotH} L ${firstX} ${padT+plotH} Z`;
   pathArea.setAttribute("d", areaD);
 
-  // last dot
+  // Dot
   const lastY = yAt(points[points.length-1].value);
   dot.setAttribute("cx", String(lastX));
   dot.setAttribute("cy", String(lastY));
@@ -268,7 +286,7 @@ function updateHeaderUI(allPoints){
     elDay.textContent = "—";
   }
 
-  // Última variación (por fecha del último punto)
+  // Última variación por fecha
   const lastDate = parseDate(last.date);
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -277,7 +295,7 @@ function updateHeaderUI(allPoints){
   else if(dd === 1) elLast.textContent = "Última variación: hace 1 día";
   else elLast.textContent = `Última variación: hace ${dd} días`;
 
-  // Tendencia semanal (basada en comportamiento REAL: hoy vs ayer)
+  // Mensaje automático según comportamiento real (hoy vs ayer)
   // Zona neutra ±0.05%
   if(prev){
     const diffPct = pct(prev.value, last.value);
@@ -295,25 +313,22 @@ async function loadAll(){
 
   history = (history || [])
     .filter(x => x && x.date && typeof x.value === "number")
-    .sort((a,b) => a.date.localeCompare(b.date));
+    .sort((a,b) => String(a.date).localeCompare(String(b.date)));
 
   elLabel.textContent = cfg.label || "Valor de canje interno (oficial)";
-  elUpd.textContent = cfg.updated_at || "—";
+  elUpd.textContent   = cfg.updated_at || "—";
 
   if(history.length === 0){
     elMain.textContent = "—";
-    elDay.textContent = "—";
+    elDay.textContent  = "—";
     elLast.textContent = "—";
     elNote.textContent = "—";
+    drawChart([]);
     return;
   }
 
   updateHeaderUI(history);
-
-  const slice = sliceForRange(history);
-  // Si por alguna razón el rango tiene 1 punto, dibuja con 2 (para que el SVG no colapse)
-  if(slice.length >= 2) drawChart(slice);
-  else drawChart(history.slice(-2));
+  drawChart(sliceForRange(history));
 }
 
 function hookTabs(){
@@ -322,23 +337,12 @@ function hookTabs(){
       document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
       tab.classList.add("active");
       currentRange = tab.dataset.range;
-
-      const slice = sliceForRange(history);
-      if(slice.length >= 2) drawChart(slice);
-      else drawChart(history.slice(-2));
+      drawChart(sliceForRange(history));
     };
   });
 }
 
-// set default active tab based on currentRange
-function setDefaultTab(){
-  document.querySelectorAll(".tab").forEach(t=>{
-    t.classList.toggle("active", t.dataset.range === currentRange);
-  });
-}
-
 hookTabs();
-setDefaultTab();
 loadAll();
 </script>
 </body>
