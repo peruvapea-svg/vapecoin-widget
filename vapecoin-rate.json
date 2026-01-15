@@ -1,6 +1,8 @@
 {
-  "base_usd": 0.01,
-  "label": "Valor de canje interno (promocional)",
-  "updated_at": "2026-01-15T12:00:00-05:00",
-  "range_pct": 0.5
+  "label": "Valor de canje interno (oficial)",
+  "currency": "USD",
+  "timezone": "America/Lima",
+  "updated_at": "2026-01-15T09:00:00-05:00",
+  "update_policy": "daily_or_manual",
+  "note": "No es precio de mercado. Valor interno de canje válido solo en PERUVAPEA."
 }
