@@ -125,8 +125,11 @@ const elLabel = document.getElementById("label");
 const elMain  = document.getElementById("mainPrice");
 const elBase  = document.getElementById("basePrice");
 const elUpd   = document.getElementById("updatedAt");
+
 const pathLine = document.getElementById("line");
 const pathArea = document.getElementById("area");
+
+let currentRange = "24H";
 
 function fmtUSD(v){
   return new Intl.NumberFormat("en-US",{
@@ -136,26 +139,60 @@ function fmtUSD(v){
   }).format(v);
 }
 
-function drawChart(base){
+function generateSeries(base, points, volatility){
+  const data = [];
+  let value = base;
+
+  for(let i=0;i<points;i++){
+    const step = (Math.random()*2-1)*volatility;
+    value = Math.max(base*0.5, Math.min(base*1.5, value*(1+step)));
+    data.push(value);
+  }
+  return data;
+}
+
+function drawChart(values){
   const w=900,h=200,p=12;
+  const min=Math.min(...values);
+  const max=Math.max(...values);
+  const span=(max-min)||1;
+
   let d="",a="";
-  let prev=base;
 
-  for(let i=0;i<40;i++){
-    const step=(Math.random()*2-1)*0.01;
-    prev=Math.max(base*0.5,Math.min(base*1.5,prev*(1+step)));
-
-    const x=p+(w-2*p)*(i/39);
-    const y=(h-p)-(h-2*p)*((prev-base*0.5)/(base));
-
+  values.forEach((v,i)=>{
+    const x=p+(w-2*p)*(i/(values.length-1));
+    const y=(h-p)-(h-2*p)*((v-min)/span);
     d+=i===0?`M${x},${y}`:` L${x},${y}`;
     if(i===0)a=`M${x},${h-p} L${x},${y}`;
     else a+=` L${x},${y}`;
-  }
-  a+=` L${w-p},${h-p} Z`;
+  });
 
+  a+=` L${w-p},${h-p} Z`;
   pathLine.setAttribute("d",d);
   pathArea.setAttribute("d",a);
+}
+
+function updateRange(base){
+  let series;
+
+  switch(currentRange){
+    case "24H":
+      series = generateSeries(base, 40, 0.003);
+      break;
+    case "7D":
+      series = generateSeries(base, 60, 0.006);
+      break;
+    case "1M":
+      series = generateSeries(base, 80, 0.009);
+      break;
+    case "1Y":
+      series = generateSeries(base, 120, 0.015);
+      break;
+    case "MAX":
+      series = generateSeries(base, 160, 0.02);
+      break;
+  }
+  drawChart(series);
 }
 
 async function init(){
@@ -170,10 +207,20 @@ async function init(){
   elBase.textContent  = `Base: ${fmtUSD(base)}`;
   elUpd.textContent   = cfg.updated_at || "—";
 
-  drawChart(base);
+  updateRange(base);
+
+  document.querySelectorAll(".tab").forEach(tab=>{
+    tab.onclick=()=>{
+      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      currentRange = tab.dataset.range;
+      updateRange(base);
+    };
+  });
 }
 
 init();
 </script>
+
 </body>
 </html>
