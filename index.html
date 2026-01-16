@@ -6,63 +6,125 @@
 <title>VAPECOIN • Valor de Canje</title>
 
 <style>
+  :root{
+    --pv-blue:#0b76ff;
+    --pv-blue-dark:#08338f;
+    --bg:#f6f8fc;
+    --card:#ffffff;
+    --border:#e9eef5;
+    --text:#203047;
+    --muted:#6f7f96;
+  }
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:transparent;}
   .wrap{display:flex;justify-content:center;padding:14px;}
   .card{
     width:100%;
-    max-width:540px; /* 20% más corto aprox */
-    background:#fff;
+    max-width:540px; /* más compacto */
+    background:var(--card);
     border-radius:18px;
-    border:1px solid #e9eef5;
+    border:1px solid var(--border);
     box-shadow:0 10px 24px rgba(0,0,0,.10);
     overflow:hidden;
   }
+
+  /* Header wallet-style */
   .top{
-    background:linear-gradient(135deg,#0b76ff 0%,#08338f 100%);
+    background:linear-gradient(135deg,var(--pv-blue) 0%,var(--pv-blue-dark) 100%);
     color:#fff;
-    padding:16px;
+    padding:16px 16px 14px;
     display:flex;
-    align-items:center;
-    gap:14px;
+    align-items:flex-start;
+    gap:12px;
   }
   .logo{
-    width:50px;height:50px;border-radius:50%;
-    background:rgba(0,0,0,.25);
+    width:48px;height:48px;border-radius:50%;
+    background:rgba(0,0,0,.22);
     display:flex;align-items:center;justify-content:center;
-    font-weight:900;font-size:26px;
+    font-weight:900;font-size:24px;
     flex:0 0 auto;
+    margin-top:2px;
   }
+  .h-left{min-width:0;}
   .title{font-weight:900;font-size:20px;line-height:1.1;}
-  .subtitle{font-size:13px;opacity:.9;margin-top:4px;}
-  .price{margin-left:auto;text-align:right;}
-  .price-main{font-weight:900;font-size:20px;}
-  .price-base{font-size:13px;opacity:.92;margin-top:6px;}
+  .subtitle{font-size:13px;opacity:.9;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-  .mid{padding:14px 16px;}
-  .tabs{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
-  .tab{
-    padding:6px 12px;border-radius:999px;
-    background:#eef2f7;color:#607089;
-    font-weight:800;font-size:12px;
-    cursor:pointer;user-select:none;
+  .h-right{margin-left:auto;text-align:right;}
+  .price-main{font-weight:900;font-size:20px;line-height:1.15;}
+  .price-sub{font-size:12.5px;opacity:.92;margin-top:6px;}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:8px;
+    font-size:12px;font-weight:800;
+    padding:6px 10px;border-radius:999px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.18);
   }
-  .tab.active{background:#0b76ff;color:#fff;}
+  .chip .dot{width:6px;height:6px;border-radius:99px;background:#fff;opacity:.85;}
 
-  .chart{
-    background:#f6f8fc;
-    border:1px solid #e9eef5;
+  .mid{padding:12px 14px 10px;}
+  .chart-wrap{
+    background:var(--bg);
+    border:1px solid var(--border);
     border-radius:16px;
-    padding:10px;
+    padding:10px 10px 8px;
   }
-  svg{width:100%;height:315px;display:block;} /* 50% más alto */
 
-  .footer{padding:12px 16px 14px;font-size:12px;color:#6b778c;}
+  /* Tabs */
+  .tabs{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin:8px 0 10px;
+    flex-wrap:wrap;
+  }
+  .tab{
+    padding:7px 12px;
+    border-radius:999px;
+    background:#eef2f7;
+    color:#607089;
+    font-weight:900;
+    font-size:12px;
+    cursor:pointer;
+    user-select:none;
+    line-height:1;
+  }
+  .tab.active{
+    background:rgba(0,0,0,.72);
+    color:#fff;
+  }
+
+  svg{width:100%;height:315px;display:block;}
+
+  /* Stats row */
+  .stats{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid var(--border);
+  }
+  .stat{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:10px 10px;
+    text-align:center;
+  }
+  .stat .k{font-size:12px;color:var(--muted);font-weight:800;}
+  .stat .v{margin-top:6px;font-size:14px;color:var(--text);font-weight:900;}
+  .stat .s{margin-top:2px;font-size:12px;color:var(--muted);}
+
+  .footer{
+    padding:10px 14px 14px;
+    font-size:12px;
+    color:var(--muted);
+  }
   .footer strong{color:#2b3445;}
 
-  /* móvil: que no se rompa */
   @media (max-width:420px){
-    .price-main{font-size:18px;}
     svg{height:290px;}
+    .price-main{font-size:18px;}
   }
 </style>
 </head>
@@ -74,37 +136,70 @@
     <div class="top">
       <div class="logo">V</div>
 
-      <div>
+      <div class="h-left">
         <div class="title">VAPECOIN</div>
         <div class="subtitle" id="label">Valor de canje interno (oficial)</div>
       </div>
 
-      <div class="price">
+      <div class="h-right">
         <div class="price-main" id="mainPrice">—</div>
-        <div class="price-base" id="basePrice">Valor oficial del día • USD</div>
-        <div class="price-base" id="dayChange">—</div>
-        <div class="price-base" id="lastUpdate">Última variación: —</div>
+        <div class="price-sub" id="subPrice">Valor oficial del día • USD</div>
+
+        <div class="chip" id="chipChange" style="display:none;">
+          <span class="dot"></span>
+          <span id="chipText">—</span>
+        </div>
+
+        <div class="price-sub" id="lastUpdate">Última variación: —</div>
       </div>
     </div>
 
     <div class="mid">
-      <div class="tabs">
-        <div class="tab" data-range="24H">24H</div>
-        <div class="tab" data-range="7D">7D</div>
-        <div class="tab active" data-range="1M">1M</div>
-        <div class="tab" data-range="1Y">1Y</div>
-        <div class="tab" data-range="MAX">MAX</div>
-      </div>
+      <div class="chart-wrap">
 
-      <div class="chart">
-        <!-- ViewBox alto = 315 (coincide con CSS y JS) -->
+        <div class="tabs">
+          <div class="tab" data-range="24H">24H</div>
+          <div class="tab" data-range="7D">7D</div>
+          <div class="tab active" data-range="1M">1M</div>
+          <div class="tab" data-range="1Y">1Y</div>
+          <div class="tab" data-range="MAX">MAX</div>
+        </div>
+
         <svg id="svg" viewBox="0 0 960 315" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(11,118,255,.22)"></stop>
+              <stop offset="100%" stop-color="rgba(11,118,255,.04)"></stop>
+            </linearGradient>
+          </defs>
+
           <g id="grid"></g>
           <g id="labels"></g>
-          <path id="area" fill="rgba(11,118,255,.16)"></path>
-          <path id="line" fill="none" stroke="#0b76ff" stroke-width="3.5"></path>
-          <circle id="dot" r="5" fill="#0b76ff"></circle>
+
+          <path id="area" fill="url(#fillGrad)"></path>
+          <path id="line" fill="none" stroke="rgba(11,118,255,1)" stroke-width="4"
+                stroke-linecap="round" stroke-linejoin="round"></path>
+          <circle id="dot" r="6" fill="rgba(11,118,255,1)"></circle>
         </svg>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Volumen 24h (sim.)</div>
+            <div class="v" id="vol24">—</div>
+            <div class="s" id="vol24s">según historial</div>
+          </div>
+          <div class="stat">
+            <div class="k">Cap. Mercado (sim.)</div>
+            <div class="v" id="mcap">—</div>
+            <div class="s" id="mcapS">según historial</div>
+          </div>
+          <div class="stat">
+            <div class="k">Liquidez (sim.)</div>
+            <div class="v" id="liq">—</div>
+            <div class="s" id="liqS">según historial</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -117,20 +212,35 @@
 </div>
 
 <script>
+/* ====== URLs ====== */
 const RATE_URL = "https://peruvapea-svg.github.io/vapecoin-widget/vapecoin-rate.json";
 const HISTORY_URL = "https://peruvapea-svg.github.io/vapecoin-widget/history.json";
 
-let currentRange = "1M";
+/* ====== Simulación (solo en index) ======
+   Puedes ajustar estos 3 números cuando quieras:
+*/
+const INTERNAL_SUPPLY = 5_000_000; // cap mercado simulado = precio * supply
+const LIQUIDITY_PCT = 0.018;       // liquidez simulada = marketcap * pct
+const VOLUME_FACTOR = 120_000;     // escala volumen 24h según movimiento diario
+
+let currentRange = "1M";  // default al cargar: 1M
 let history = [];
 let cfg = null;
 
+/* ====== Elements ====== */
 const elLabel = document.getElementById("label");
 const elMain  = document.getElementById("mainPrice");
-const elBase  = document.getElementById("basePrice");
-const elDay   = document.getElementById("dayChange");
+const elSub   = document.getElementById("subPrice");
+const elChip  = document.getElementById("chipChange");
+const elChipT = document.getElementById("chipText");
 const elLast  = document.getElementById("lastUpdate");
 const elUpd   = document.getElementById("updatedAt");
 const elNote  = document.getElementById("note");
+
+const elVol   = document.getElementById("vol24");
+const elVolS  = document.getElementById("vol24s");
+const elMcap  = document.getElementById("mcap");
+const elLiq   = document.getElementById("liq");
 
 const svgGrid   = document.getElementById("grid");
 const svgLabels = document.getElementById("labels");
@@ -138,11 +248,19 @@ const pathLine  = document.getElementById("line");
 const pathArea  = document.getElementById("area");
 const dot       = document.getElementById("dot");
 
+/* ====== Helpers ====== */
 function fmtUSD(v){
   return new Intl.NumberFormat("en-US",{
     style:"currency",
     currency:"USD",
     maximumFractionDigits:6
+  }).format(v);
+}
+function fmtUSD0(v){
+  return new Intl.NumberFormat("en-US",{
+    style:"currency",
+    currency:"USD",
+    maximumFractionDigits:0
   }).format(v);
 }
 function pct(from, to){
@@ -158,7 +276,8 @@ function daysBetween(a,b){
   return Math.round((b - a) / ms);
 }
 function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
-function addText(parent, x, y, text, size=12, color="#6f7f96", anchor="start"){
+
+function addText(parent, x, y, text, size=12, color="rgba(111,127,150,1)", anchor="start"){
   const t = document.createElementNS("http://www.w3.org/2000/svg","text");
   t.setAttribute("x", x);
   t.setAttribute("y", y);
@@ -166,10 +285,10 @@ function addText(parent, x, y, text, size=12, color="#6f7f96", anchor="start"){
   t.setAttribute("font-size", String(size));
   t.setAttribute("font-family", "system-ui, -apple-system, Segoe UI, Roboto, Arial");
   t.setAttribute("text-anchor", anchor);
-  t.textContent = text;
   parent.appendChild(t);
+  t.textContent = text;
 }
-function addLine(parent, x1,y1,x2,y2, color="rgba(120,140,165,.28)", width=1){
+function addLine(parent, x1,y1,x2,y2, color="rgba(120,140,165,.22)", width=1){
   const l = document.createElementNS("http://www.w3.org/2000/svg","line");
   l.setAttribute("x1", x1); l.setAttribute("y1", y1);
   l.setAttribute("x2", x2); l.setAttribute("y2", y2);
@@ -178,6 +297,7 @@ function addLine(parent, x1,y1,x2,y2, color="rgba(120,140,165,.28)", width=1){
   parent.appendChild(l);
 }
 
+/* ====== Range slicing ====== */
 function sliceForRange(data){
   if(data.length === 0) return data;
   if(currentRange === "24H") return data.slice(-2);
@@ -186,20 +306,41 @@ function sliceForRange(data){
   if(currentRange === "1Y")  return data.slice(-365);
   return data;
 }
-
 function safePoints(points){
-  // Evita blanco si hay 0/1 puntos
   if(points.length >= 2) return points;
   if(history.length >= 2) return history.slice(-2);
-  // si solo hay 1 punto total, duplicamos artificialmente (misma fecha/valor)
   if(history.length === 1) return [history[0], history[0]];
   return [];
 }
 
+/* ====== Smooth curve (Catmull-Rom to Bezier) ====== */
+function smoothPath(pts){
+  if(pts.length < 2) return "";
+  if(pts.length === 2){
+    return `M ${pts[0].x} ${pts[0].y} L ${pts[1].x} ${pts[1].y}`;
+  }
+  const d = [];
+  d.push(`M ${pts[0].x} ${pts[0].y}`);
+  for(let i=0;i<pts.length-1;i++){
+    const p0 = pts[i-1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i+1];
+    const p3 = pts[i+2] || p2;
+
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = p2.y - (p3.y - p1.y) / 6;
+
+    d.push(`C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2.x} ${p2.y}`);
+  }
+  return d.join(" ");
+}
+
+/* ====== Draw ====== */
 function drawChart(pointsRaw){
   const points = safePoints(pointsRaw);
   if(points.length < 2){
-    // no hay data
     clearNode(svgGrid); clearNode(svgLabels);
     pathLine.setAttribute("d", "");
     pathArea.setAttribute("d", "");
@@ -208,7 +349,7 @@ function drawChart(pointsRaw){
   }
 
   const W = 960, H = 315;
-  const padL = 70, padR = 26, padT = 14, padB = 62; // más espacio abajo
+  const padL = 72, padR = 26, padT = 14, padB = 62;
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
 
@@ -223,67 +364,59 @@ function drawChart(pointsRaw){
   clearNode(svgGrid);
   clearNode(svgLabels);
 
-  // Grid + labels Y (5)
+  // Grid horizontal + labels Y
   const levels = 5;
   for(let k=0;k<levels;k++){
     const t = k/(levels-1);
     const y = padT + plotH*t;
-    addLine(svgGrid, padL, y, W-padR, y);
+    addLine(svgGrid, padL, y, W-padR, y, "rgba(120,140,165,.22)", 1);
     const v = (maxV - span*t);
-    addText(svgLabels, padL-10, y+4, fmtUSD(v), 12, "#6f7f96", "end");
+    addText(svgLabels, padL-12, y+4, fmtUSD(v), 12, "rgba(111,127,150,1)", "end");
   }
 
-  // X labels (4 máx) formato corto MM-DD y sin corte
+  // X labels (4 max) - MM-DD
   const labelCount = Math.min(4, points.length);
   for(let i=0;i<labelCount;i++){
     const idx = Math.round(i*(points.length-1)/(labelCount-1 || 1));
     const x = xAt(idx);
-
     const d = points[idx].date || "";
     const short = d.length >= 10 ? d.slice(5) : d;
 
     const safeX = Math.max(padL + 20, Math.min(W - padR - 20, x));
-    addText(svgLabels, safeX, H-20, short, 12, "#6f7f96", "middle");
-
-    addLine(svgGrid, x, padT, x, padT+plotH, "rgba(120,140,165,.16)", 1);
+    addText(svgLabels, safeX, H-20, short, 12, "rgba(111,127,150,1)", "middle");
+    addLine(svgGrid, x, padT, x, padT+plotH, "rgba(120,140,165,.12)", 1);
   }
 
-  // Line path
-  let dPath = "";
-  for(let i=0;i<points.length;i++){
-    const x = xAt(i);
-    const y = yAt(points[i].value);
-    dPath += (i===0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
-  }
-  pathLine.setAttribute("d", dPath);
+  const pts = points.map((p,i)=>({x:xAt(i), y:yAt(p.value)}));
+  const lineD = smoothPath(pts);
+  pathLine.setAttribute("d", lineD);
 
-  // Area path
-  const lastX = xAt(points.length-1);
-  const firstX = xAt(0);
-  const areaD = dPath + ` L ${lastX} ${padT+plotH} L ${firstX} ${padT+plotH} Z`;
+  const lastX = pts[pts.length-1].x;
+  const firstX = pts[0].x;
+  const bottomY = padT + plotH;
+  const areaD = `${lineD} L ${lastX} ${bottomY} L ${firstX} ${bottomY} Z`;
   pathArea.setAttribute("d", areaD);
 
-  // Dot
-  const lastY = yAt(points[points.length-1].value);
   dot.setAttribute("cx", String(lastX));
-  dot.setAttribute("cy", String(lastY));
+  dot.setAttribute("cy", String(pts[pts.length-1].y));
 }
 
+/* ====== Header + stats ====== */
 function updateHeaderUI(allPoints){
   const last = allPoints[allPoints.length-1];
   const prev = allPoints.length >= 2 ? allPoints[allPoints.length-2] : null;
 
   elMain.textContent = `1 VAPECOIN = ${fmtUSD(last.value)}`;
-  elBase.textContent = "Valor oficial del día • USD";
+  elSub.textContent = "Valor oficial del día • USD";
 
-  // % vs ayer
+  // % vs ayer (chip)
   if(prev){
     const ch = pct(prev.value, last.value);
-    const arrow = ch >= 0 ? "⬆️" : "⬇️";
-    const sign = ch >= 0 ? "+" : "";
-    elDay.textContent = `${arrow} ${sign}${ch.toFixed(2)}% vs ayer`;
+    const up = ch >= 0;
+    elChip.style.display = "inline-flex";
+    elChipT.textContent = `${up ? "⬆️" : "⬇️"} ${up ? "+" : ""}${ch.toFixed(2)}% vs ayer`;
   }else{
-    elDay.textContent = "—";
+    elChip.style.display = "none";
   }
 
   // Última variación por fecha
@@ -295,18 +428,36 @@ function updateHeaderUI(allPoints){
   else if(dd === 1) elLast.textContent = "Última variación: hace 1 día";
   else elLast.textContent = `Última variación: hace ${dd} días`;
 
-  // Mensaje automático según comportamiento real (hoy vs ayer)
-  // Zona neutra ±0.05%
+  // Tendencia semanal (basada en hoy vs ayer) + aclaración simulación
+  let trendText = "Tendencia semanal: ➖ Estable";
   if(prev){
     const diffPct = pct(prev.value, last.value);
-    if(diffPct > 0.05) elNote.textContent = "Tendencia semanal: 📈 Alcista";
-    else if(diffPct < -0.05) elNote.textContent = "Tendencia semanal: 📉 Bajista";
-    else elNote.textContent = "Tendencia semanal: ➖ Estable";
-  }else{
-    elNote.textContent = "Tendencia semanal: ➖ Estable";
+    if(diffPct > 0.05) trendText = "Tendencia semanal: 📈 Alcista";
+    else if(diffPct < -0.05) trendText = "Tendencia semanal: 📉 Bajista";
   }
+  elNote.textContent = `${trendText} • Métricas internas simuladas según historial`;
+
+  // Stats simuladas (basadas en historial + parámetros internos)
+  const price = last.value;
+
+  let volUsd = 250;
+  if(prev){
+    const absChange = Math.abs(last.value - prev.value);
+    volUsd = Math.max(250, absChange * VOLUME_FACTOR);
+  }
+  const volVC = volUsd / price;
+
+  const mcap = price * INTERNAL_SUPPLY;
+  const liq  = mcap * LIQUIDITY_PCT;
+
+  elVol.textContent  = fmtUSD0(volUsd);
+  elVolS.textContent = `${Math.round(volVC).toLocaleString("en-US")} VAPECOIN`;
+
+  elMcap.textContent = fmtUSD0(mcap);
+  elLiq.textContent  = fmtUSD0(liq);
 }
 
+/* ====== Load ====== */
 async function loadAll(){
   cfg = await (await fetch(RATE_URL, {cache:"no-store"})).json();
   history = await (await fetch(HISTORY_URL, {cache:"no-store"})).json();
@@ -320,8 +471,9 @@ async function loadAll(){
 
   if(history.length === 0){
     elMain.textContent = "—";
-    elDay.textContent  = "—";
-    elLast.textContent = "—";
+    elSub.textContent  = "Valor oficial del día • USD";
+    elChip.style.display = "none";
+    elLast.textContent = "Última variación: —";
     elNote.textContent = "—";
     drawChart([]);
     return;
@@ -331,6 +483,7 @@ async function loadAll(){
   drawChart(sliceForRange(history));
 }
 
+/* ====== Tabs ====== */
 function hookTabs(){
   document.querySelectorAll(".tab").forEach(tab=>{
     tab.onclick = ()=>{
@@ -341,7 +494,6 @@ function hookTabs(){
     };
   });
 }
-
 hookTabs();
 loadAll();
 </script>
