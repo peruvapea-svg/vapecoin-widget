@@ -2,7 +2,7 @@
   "label": "Valor de canje interno (oficial)",
   "currency": "USD",
   "timezone": "America/Lima",
-  "updated_at": "2026-01-24T09:00:00-05:00",
+  "updated_at": "2026-01-25T09:00:00-05:00",
   "note": "No es precio de mercado. Valor interno de canje válido solo en PERUVAPEA.",
   "auto_update": true,
   "update_time_local": "09:00",
